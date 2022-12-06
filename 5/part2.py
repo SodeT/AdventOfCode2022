@@ -68,8 +68,11 @@ def move(boxes, moves):
         src = move[1] -1
         dest = move[2] -1
 
+        temp_arr = []
         for i in range(amount):
-            boxes[dest].append(boxes[src].pop())
+            temp_arr.append(boxes[src].pop())
+        temp_arr.reverse()
+        boxes[dest] = [*boxes[dest], *temp_arr]
 
     result = ""
     for stack in boxes:
