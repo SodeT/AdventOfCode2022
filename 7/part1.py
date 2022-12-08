@@ -1,11 +1,19 @@
 
-class folder_class:
+class folder_class():
     size = 0
     name = ""
     nested_folders = []
     files = []
     total_size = 0
     size_checked = False
+
+    def __init__(self):
+        self.size = 0
+        self.name = ""
+        self.nested_folders = []
+        self.files = []
+        self.total_size = 0
+        self.size_checked = False
 
 def read_input(lines):
 
@@ -16,13 +24,14 @@ def read_input(lines):
     for line in lines:
 
         if "$ cd .." in line:
-            for folder in folders:
-                if dir.name in folder.nested_folders:
-                    dir = folder
+            ls_ret = False
+            continue
 
         elif "$ cd" in line:
             ls_ret = False
-            folders.append(dir)
+            if dir.name != "":
+                folders.append(dir)
+
             dir = folder_class()
             dir.name = line[4:].strip()
 
@@ -32,7 +41,6 @@ def read_input(lines):
         elif ls_ret:
             if "dir" in line:
                 dir.nested_folders.append(line.split(" ")[1].strip())
-                print(dir.nested_folders[-1])
             elif line.split(" ")[0].isnumeric():
                 dir.files.append([int(line.split(" ")[0].strip()), line.split(" ")[1].strip()])
 
@@ -54,7 +62,7 @@ def get_size(folder, folders):
         if ret != 0:
             folders_to_check.append(ret)
         else:
-            pass #print("error: ", ftc)
+            print("error: ", ftc)
 
     folders_checked = []
 
@@ -62,11 +70,14 @@ def get_size(folder, folders):
 
     for ftc in folders_to_check:
         folder.total_size += ftc.total_size
+
         not_checked.append(ftc)            
 
     while len(not_checked) > 0:
         res, not_checked = check_nested(not_checked, folders)
+        print("pre: ", folder.total_size, res)
         folder.total_size += res
+        print("post: ", folder.total_size, res)
 
 
     return folder
@@ -74,9 +85,10 @@ def get_size(folder, folders):
 def check_nested(not_checked, folders):
     new_not_checked = []
     total = 0
+
     for nc in not_checked:
         for nested_folder_name in nc.nested_folders:
-            print(nested_folder_name)
+
             nested_folder = get_folder(nested_folder_name, folders)
             total += nested_folder.total_size
             if len(nested_folder.nested_folders) > 0:
@@ -87,9 +99,8 @@ def check_nested(not_checked, folders):
 
 def get_folder(name, folders):
     for folder in folders:
-        print("\"" + folder.name.strip() + "\" : ", name)
         if folder.name == name:
-            print("true")
+            print("name: ", folders[folders.index(folder)].name)
             return folders[folders.index(folder)]
 
 
